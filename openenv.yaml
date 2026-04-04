@@ -1,0 +1,12 @@
+name: nexus_dispatch
+version: "1.0.0"
+description: "Emergency dispatch simulation with weighted triage rewards."
+
+server:
+  host: "0.0.0.0"
+  port: 7860
+  endpoint: "/step"
+
+task:
+  goal: "Maximize the total score by dispatching units to the highest severity calls first."
+  max_steps: 10
