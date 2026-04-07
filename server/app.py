@@ -1,64 +1,50 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query
 from env.engine import NexusEnv
 from env.models import Action
 import uvicorn
-import os
 
-# Initialize FastAPI and the Environment
 app = FastAPI(title="Nexus Dispatch API")
 env = NexusEnv()
 
 @app.get("/")
 def read_root():
-    return {
-        "status": "Nexus Dispatch Online", 
-        "port": 7860,
-        "mode": "OpenEnv Multi-Mode"
-    }
+    return {"status": "Nexus Dispatch Online", "port": 7860}
 
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
 
-# FIX: Mandatory endpoint for 'OpenEnv Reset (POST OK)' check
 @app.post("/reset")
-async def reset(request: Request):
-    """
-    Resets the environment state. 
-    Required by the automated hackathon checker.
-    """
-    # If your engine has a reset method, call it here: env.reset()
-    return {"status": "success", "message": "Environment reset"}
+def reset(task: str = Query(default="easy_dispatch")):
+    obs = env.reset(task=task)
+    return {"observation": obs.model_dump()}
 
 @app.post("/step")
 def step(action: Action):
-    """
-    Standard OpenEnv step endpoint for taking actions in the environment.
-    """
     obs, reward, done, info = env.step(action)
-    
-    # Ensure observation is serializable
-    obs_data = obs.model_dump() if hasattr(obs, 'model_dump') else obs
-    
     return {
-        "observation": obs_data,
+        "observation": obs.model_dump(),
         "reward": reward,
         "done": done,
         "info": info
     }
 
-# FIX: Explicit main() function
-# Required to fix "server/app.py missing main() function"
-def main():
-    """
-    Main entry point for multi-mode deployment.
-    The validator calls this function directly to start the server.
-    """
-    # Uses 'PORT' environment variable if available, otherwise defaults to 7860
-    port = int(os.environ.get("PORT", 7860))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+@app.get("/state")
+def state():
+    return env.state().model_dump()
 
-# FIX: Mandatory if-name-main block
-# Required to fix "main() function not callable"
+@app.get("/tasks")
+def list_tasks():
+    return {
+        "tasks": [
+            {"name": "easy_dispatch", "difficulty": "easy", "max_steps": 5},
+            {"name": "medium_dispatch", "difficulty": "medium", "max_steps": 10},
+            {"name": "hard_dispatch", "difficulty": "hard", "max_steps": 15}
+        ]
+    }
+
+def main():
+    uvicorn.run(app, host="0.0.0.0", port=7860)
+
 if __name__ == "__main__":
     main()
