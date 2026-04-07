@@ -76,7 +76,7 @@ def run_task(sim: NexusEnv, client: OpenAI, model_name: str, task_name: str, dif
     )
     success_str = "true" if env_state.active_calls == 0 else "false"
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
-    print(f"[END] success={success_str} steps={len(rewards)} score={score:.2f} rewards={rewards_str}", flush=True)
+    print(f"[END] success={success_str} steps={len(rewards)} score={score:.4f} rewards={rewards_str}", flush=True)
 
 def run_test():
     API_BASE_URL = os.environ.get("API_BASE_URL", "https://router.huggingface.co/v1")
