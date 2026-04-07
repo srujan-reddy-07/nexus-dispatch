@@ -2,7 +2,7 @@
 title: Nexus Dispatch
 emoji: 🚑
 colorFrom: red
-colorTo: orange
+colorTo: red
 sdk: docker
 app_port: 7860
 pinned: false
@@ -27,20 +27,25 @@ An AI agent acts as an emergency dispatch coordinator. Each step, it observes in
 
 ## Action Space
 
+```json
 {
   "type": "DISPATCH",
   "unit_id": "unit_001",
   "call_id": "call_001"
 }
+```
 
 Or a no-op:
 
+```json
 {
   "type": "WAIT"
 }
+```
 
 ## Observation Space
 
+```json
 {
   "calls": [
     {"id": "call_001", "type": "Medical", "severity": 4, "location": [12.34, 56.78]}
@@ -49,36 +54,49 @@ Or a no-op:
     {"id": "unit_001", "type": "Ambulance", "status": "Available", "location": [0.0, 0.0]}
   ]
 }
+```
 
 ## Reward Function
 
-- DISPATCH to a valid call: severity / 5.0 (range: 0.2 – 1.0)
-- WAIT or invalid action: 0.0
+- `DISPATCH` to a valid call: `severity / 5.0` (range: 0.2 – 1.0)
+- `WAIT` or invalid action: `0.0`
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | /reset?task=easy_dispatch | Reset environment for a task |
-| POST | /step | Take one action |
-| GET | /state | Get current environment state |
-| GET | /tasks | List all available tasks |
-| GET | /health | Health check |
+| `POST` | `/reset?task=easy_dispatch` | Reset environment for a task |
+| `POST` | `/step` | Take one action |
+| `GET` | `/state` | Get current environment state |
+| `GET` | `/tasks` | List all available tasks |
+| `GET` | `/health` | Health check |
 
 ## Setup
 
+### Local
+
+```bash
 pip install .
 uvicorn server.app:app --host 0.0.0.0 --port 7860
+```
 
-## Docker
+### Run Inference Baseline
 
+```bash
+python inference.py
+```
+
+### Docker
+
+```bash
 docker build -t nexus-dispatch .
 docker run -p 7860:7860 nexus-dispatch
+```
 
 ## Environment Variables
 
-| Variable | Description |
-|---|---|
-| HF_TOKEN | Hugging Face / API key |
-| API_BASE_URL | LLM API endpoint |
-| MODEL_NAME | Model identifier |
+| Variable | Description | Default |
+|---|---|---|
+| `HF_TOKEN` | Hugging Face / API key | — |
+| `API_BASE_URL` | LLM API endpoint | HF Inference API |
+| `MODEL_NAME` | Model identifier | Llama-3-70b-instruct |
