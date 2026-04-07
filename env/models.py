@@ -2,8 +2,9 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 class Action(BaseModel):
-    dispatch_unit_id: str
-    call_id: str
+    type: str
+    unit_id: Optional[str] = None
+    call_id: Optional[str] = None
 
 class Emergency(BaseModel):
     id: str
@@ -20,3 +21,10 @@ class ResponseUnit(BaseModel):
 class Observation(BaseModel):
     calls: List[Emergency] = []
     units: List[ResponseUnit] = []
+
+class EnvState(BaseModel):
+    task: str
+    step_count: int
+    active_calls: int
+    total_reward: float
+    done: bool
