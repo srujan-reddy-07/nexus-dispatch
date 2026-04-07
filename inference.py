@@ -12,12 +12,10 @@ TASKS = [
     {"name": "hard_dispatch", "difficulty": "hard", "max_steps": 15},
 ]
 
-
 def format_action(action: Action) -> str:
     if action.type == "DISPATCH":
         return f"DISPATCH({action.unit_id},{action.call_id})"
     return "WAIT()"
-
 
 def run_task(sim: NexusEnv, model_name: str, task_name: str, difficulty: str, max_steps: int):
     grader = DispatchGrader(difficulty=difficulty)
@@ -56,6 +54,7 @@ def run_task(sim: NexusEnv, model_name: str, task_name: str, difficulty: str, ma
             done = True
 
         rewards.append(reward)
+        
         action_str = format_action(move) if move else "null"
         done_str = "true" if done else "false"
         print(f"[STEP] step={len(rewards)} action={action_str} reward={reward:.2f} done={done_str} error={error}", flush=True)
@@ -75,13 +74,15 @@ def run_task(sim: NexusEnv, model_name: str, task_name: str, difficulty: str, ma
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
     print(f"[END] success={success_str} steps={len(rewards)} score={score:.2f} rewards={rewards_str}", flush=True)
 
-
 def run_test():
-    HF_TOKEN = os.getenv("HF_TOKEN", "no-token")
     API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
     MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
+    HF_TOKEN = os.getenv("HF_TOKEN")
+    
+    API_KEY = HF_TOKEN or os.getenv("API_KEY")
+    LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 
-    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
+    client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
 
     sim = NexusEnv()
 
@@ -93,7 +94,6 @@ def run_test():
             difficulty=task["difficulty"],
             max_steps=task["max_steps"]
         )
-
 
 if __name__ == "__main__":
     run_test()
