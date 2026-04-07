@@ -7,6 +7,21 @@ server:
   port: 7860
   endpoint: "/step"
 
-task:
-  goal: "Maximize the total score by dispatching units to the highest severity calls first."
-  max_steps: 10
+tasks:
+  - name: easy_dispatch
+    difficulty: easy
+    goal: "Dispatch one available unit to handle a single emergency call."
+    max_steps: 5
+    reward_range: [0.0, 1.0]
+
+  - name: medium_dispatch
+    difficulty: medium
+    goal: "Dispatch units to handle multiple simultaneous calls in order of severity."
+    max_steps: 10
+    reward_range: [0.0, 1.0]
+
+  - name: hard_dispatch
+    difficulty: hard
+    goal: "Manage limited units across many high-volume emergency calls under pressure."
+    max_steps: 15
+    reward_range: [0.0, 1.0]
