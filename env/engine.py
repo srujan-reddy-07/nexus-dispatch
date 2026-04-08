@@ -1,4 +1,3 @@
-
 import random
 import math
 from typing import Tuple, List, Dict
@@ -11,25 +10,13 @@ TASK_CONFIGS = {
 }
 
 EMERGENCY_TYPES = ["Medical", "Fire", "Police", "Rescue"]
-TYPE_MATCHING = {
-    "Medical": ["Ambulance", "RescueTeam"],
-    "Fire": ["FireTruck"],
-    "Police": ["PoliceUnit"],
-    "Rescue": ["RescueTeam", "FireTruck"]
-}
+TYPE_MATCHING = {"Medical": ["Ambulance", "RescueTeam"], "Fire": ["FireTruck"], "Police": ["PoliceUnit"], "Rescue": ["RescueTeam", "FireTruck"]}
 
 class NexusEnv:
     def __init__(self):
-        self.current_task = "easy_dispatch"
-        self.current_calls: List[Emergency] = []
-        self._units: List[ResponseUnit] = []
-        self.step_count = 0
-        self.max_steps = 10
-        self.total_reward = 0.0
-        self.done = False
-        self.lives_saved = 0
-        self.total_response_dist = 0.0
-        self.match_count = 0
+        self.current_task, self.current_calls, self._units = "easy_dispatch", [], []
+        self.step_count, self.max_steps, self.total_reward, self.done = 0, 10, 0.0, False
+        self.lives_saved, self.total_response_dist, self.match_count = 0, 0.0, 0
 
     def _calculate_distance(self, loc1, loc2):
         return math.sqrt((loc1[0] - loc2[0])**2 + (loc1[1] - loc2[1])**2)
