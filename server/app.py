@@ -1,4 +1,4 @@
-# FILE: server/app.py
+
 from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 from env.engine import NexusEnv
@@ -27,8 +27,8 @@ def step(action: Action):
 @app.get("/state")
 def state():
     res = env.state().model_dump()
-    obs = env._get_observation()
-    res["calls"], res["units"] = obs.calls, obs.units
+    obs = env._get_observation().model_dump()
+    res["calls"], res["units"] = obs["calls"], obs["units"]
     return res
 
 @app.get("/tasks")
