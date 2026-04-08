@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 from env.engine import NexusEnv
@@ -37,5 +36,8 @@ def list_tasks():
                      {"name": "medium_dispatch", "difficulty": "medium", "max_steps": 20},
                      {"name": "hard_dispatch", "difficulty": "hard", "max_steps": 30}]}
 
-if __name__ == "__main__":
+def main():
     uvicorn.run(app, host="0.0.0.0", port=7860)
+
+if __name__ == "__main__":
+    main()
